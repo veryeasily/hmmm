@@ -1,25 +1,25 @@
 {
-  "name": "hmmm",
-  "version": "1.0.0",
-  "description": "Detects parallel motion for four part writing in MIDI files",
-  "type": "module",
-  "main": "dist/index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "pnpm run build && node dist/index.js",
-    "dev": "pnpm run build && node --inspect-brk dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@tonejs/midi": "^2.0.28",
-    "tonal": "^5.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.5.6",
-    "prettier": "^3.0.2",
-    "typescript": "^5.2.2"
-  }
+    "name": "hmmm",
+    "version": "1.0.0",
+    "description": "Detects parallel motion for four part writing in MIDI files",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+        "build": "tsc",
+        "start": "pnpm run build && node dist/index.js",
+        "dev": "pnpm run build && node --inspect-brk dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@tonejs/midi": "^2.0.28",
+        "tonal": "^5.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.5.6",
+        "prettier": "^3.0.2",
+        "typescript": "^5.2.2"
+    }
 }

@@ -80,29 +80,29 @@ class Composition {
     }
 
     /**
-     * Parallel motion is a time-indexed array of boolean symmetric matrices
-     * where each element (t, i, j) is true if voice i and voice j will move in
-     * parallel at time t for some banned interval. Since the matrix is
+     * Parallel motion grid is a time-indexed array of boolean symmetric
+     * matrices where each element (t, i, j) is true if voice i and voice j will
+     * move in parallel at time t for some banned interval. Since the matrix is
      * symmetric, only the upper triangle is stored.
      */
-    get parallelMotion() {
+    get parallelMotionGrid() {
         const grid = this.intervalGrid
         const banned = Composition.bannedIntervals
 
-        // ic stands for interval collection
-        const parallelMotion = grid.map((ic, gIdx) => {
-            const nextIc = grid[gIdx + 1]
-            return ic.map((intervals, icIdx) => {
-                const nextIntervals = nextIc?.[icIdx]
+        const parallelMotion = grid.map((matrix, t) => {
+            const nextMatrix = grid[t + 1]
+
+            return matrix.map((intervals, i) => {
+                const nextIntervals = nextMatrix?.[i]
                 if (!nextIntervals) return []
 
-                return intervals.map((int, iIdx) => {
-                    if (!banned.includes(int)) {
+                return intervals.map((interval, j) => {
+                    if (!banned.includes(interval)) {
                         return false
                     }
 
-                    const next = nextIntervals[iIdx]
-                    if (int === next) {
+                    const next = nextIntervals[j]
+                    if (interval === next) {
                         return true
                     }
 
@@ -126,12 +126,12 @@ class Composition {
         this.validateLength()
 
         const grid = this.intervalGrid
-        const parallelMotion = this.parallelMotion
+        const motion = this.parallelMotionGrid
 
         log(grid)
-        log(parallelMotion)
+        log(motion)
 
-        const detected = parallelMotion.flat(2).some((check) => check)
+        const detected = motion.flat(2).some((check) => check)
 
         if (detected) {
             throw new Error('Parallel motion detected')

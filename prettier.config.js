@@ -5,7 +5,7 @@ const config = {
     semi: false,
     tabWidth: 4,
     singleQuote: true,
-    trailingComma: "all",
+    trailingComma: 'all',
 }
 
-module.exports = config
+export default config
