@@ -31,6 +31,12 @@ class Composition {
         this.length = this.voices[0].length
     }
 
+    static create(midis: tonejs.Midi[]) {
+        const composition = new Composition(midis)
+        composition.validate()
+        return composition
+    }
+
     /**
      * We throw away all the midi data except the notes. Also, assuming that the
      * MIDI is a loop, then we add the first note to the end of the array. In
@@ -148,8 +154,7 @@ async function main() {
     ])
 
     const midis = files.map((file) => new tonejs.Midi(file))
-    const composition = new Composition(midis)
-    composition.validate()
+    Composition.create(midis)
 
     console.log('No parallel motion detected!')
 }
