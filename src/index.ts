@@ -1,6 +1,8 @@
 import tonejs from '@tonejs/midi'
 import fs from 'fs/promises'
 
+const DEBUG = process.env.HMMM_DEBUG || false
+
 function log(...args: any[]) {
     console.dir(args, { depth: null })
 }
@@ -127,20 +129,27 @@ class Composition {
         }
     }
 
+    validateParallelMotion() {
+        const motion = this.parallelMotionGrid
+        const detected = motion.flat(2).some((check) => check)
+
+        if (detected) {
+            throw new Error('Parallel motion detected')
+        }
+    }
+
     validate() {
         this.validateLength()
 
         const grid = this.intervalGrid
         const motion = this.parallelMotionGrid
 
-        log(grid)
-        log(motion)
-
-        const detected = motion.flat(2).some((check) => check)
-
-        if (detected) {
-            throw new Error('Parallel motion detected')
+        if (DEBUG) {
+            log(grid)
+            log(motion)
         }
+
+        this.validateParallelMotion()
     }
 }
 
