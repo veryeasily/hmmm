@@ -25,8 +25,8 @@ class Composition {
             return midi.tracks[0].notes.map((note) => note.midi)
         })
 
-        for (const voice of voices) {
-            if (loop) {
+        if (loop) {
+            for (const voice of voices) {
                 voice.push(voice[0])
             }
         }
