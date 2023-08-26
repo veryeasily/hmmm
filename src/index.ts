@@ -1,9 +1,8 @@
 import tonejs from '@tonejs/midi'
 import fs from 'fs/promises'
-import util from 'node:util'
 
 function log(...args: any[]) {
-    console.log(util.inspect(args, false, null, true))
+    console.dir(args, { depth: null })
 }
 
 /**
@@ -133,6 +132,11 @@ class Composition {
 
         const grid = this.intervalGrid
         const motion = this.parallelMotionGrid
+
+        const a: any = {}
+        a.b = 1
+        a.c = a
+        console.log(util.inspect(a, false, null, true))
 
         log(grid)
         log(motion)
