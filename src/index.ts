@@ -56,7 +56,7 @@ class Composition {
     }
 
     /**
-     * Interval grid is a time indexed array of symmetric matrices where each
+     * Interval grid is a time-indexed array of symmetric matrices where each
      * element (t, i, j) is the interval between voice i and voice j at time t.
      * Since the matrix is symmetric, only the upper triangle is stored.
      */
@@ -80,10 +80,10 @@ class Composition {
     }
 
     /**
-     * Parallel motion is a time indexed array of symmetric matrices where each
-     * element (t, i, j) is true if voice i and voice j will move in parallel
-     * at time t for some banned interval. Since the matrix is symmetric, only
-     * the upper triangle is stored.
+     * Parallel motion is a time-indexed array of boolean symmetric matrices
+     * where each element (t, i, j) is true if voice i and voice j will move in
+     * parallel at time t for some banned interval. Since the matrix is
+     * symmetric, only the upper triangle is stored.
      */
     get parallelMotion() {
         const grid = this.intervalGrid
