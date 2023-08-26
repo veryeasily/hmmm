@@ -21,17 +21,13 @@ class Composition {
     }
 
     static processVoices(midis: tonejs.Midi[], loop = true) {
-        const voices = midis.map((midi) => {
-            return midi.tracks[0].notes.map((note) => note.midi)
-        })
-
-        if (loop) {
-            for (const voice of voices) {
-                voice.push(voice[0])
+        return midis.map((midi) => {
+            const notes = midi.tracks[0].notes.map((note) => note.midi)
+            if (loop) {
+                notes.push(notes[0])
             }
-        }
-
-        return voices
+            return notes
+        })
     }
 
     static interval(n1: number, n2: number) {
