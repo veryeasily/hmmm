@@ -6,6 +6,13 @@ function log(...args: any[]) {
     console.log(util.inspect(args, false, null, true))
 }
 
+/**
+ * We use the Composition class to check for parallel motion in a composition.
+ * A composition is a collection of voices. Each voice is a time indexed array
+ * of notes given by their MIDI number (for example, middle C is 60). The
+ * composition is valid if there is no parallel motion between any two voices as
+ * time advances.
+ */
 class Composition {
     static bannedIntervals = [0, 5, 7]
 
@@ -14,6 +21,12 @@ class Composition {
 
     playhead = 0
 
+    /**
+     * MIDI can technically store more than one track per file, but we're
+     * assuming that each file only has one track. We also assume that the MIDI
+     * is a loop, so we add the first note to the end of the array. This helps
+     * us later because you can have parallel motion at the end of a loop.
+     */
     constructor(midis: tonejs.Midi[]) {
         this.voices = Composition.processVoices(midis, true)
         this.length = this.voices[0].length
