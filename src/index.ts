@@ -1,6 +1,6 @@
 import tonejs from '@tonejs/midi'
 import fs from 'fs/promises'
-import util from 'util'
+import util from 'node:util'
 
 function log(...args: any[]) {
     console.log(util.inspect(args, false, null, true))
@@ -17,9 +17,14 @@ class Composition {
     constructor(midis: tonejs.Midi[]) {
         this.voices = Composition.processVoices(midis, true)
         this.length = this.voices[0].length
-        this.validate()
     }
 
+    /**
+     * We throw away all the midi data except the notes. Also, assuming that the
+     * MIDI is a loop, then we add the first note to the end of the array. In
+     * terms of visualizing this, this will be a matrix where each element
+     * (t, i) is the note played by voice i at time t.
+     */
     static processVoices(midis: tonejs.Midi[], loop = true) {
         return midis.map((midi) => {
             const notes = midi.tracks[0].notes.map((note) => note.midi)
@@ -30,23 +35,44 @@ class Composition {
         })
     }
 
+    /**
+     * Javascript modulo operator is not mathematically correct for negative
+     * numbers. This function returns the correct modulo for negative intervals.
+     */
     static interval(n1: number, n2: number) {
         return (((n1 - n2) % 12) + 12) % 12
     }
 
+    /**
+     * Interval grid is a time indexed array of symmetric matrices where each
+     * element (t, i, j) is the interval between voice i and voice j at time t.
+     * Since the matrix is symmetric, only the upper triangle is stored.
+     */
     get intervalGrid() {
         const intervalGrid: number[][][] = []
-        for (let cursor = 0; cursor < this.length; cursor++) {
-            const intervals = this.voices.map((voice, vIdx) => {
-                return this.voices.slice(vIdx + 1).map((other) => {
-                    return Composition.interval(voice[cursor], other[cursor])
-                })
-            })
-            intervalGrid.push(intervals)
+        for (let t = 0; t < this.length; t++) {
+            if (!intervalGrid[t]) intervalGrid[t] = []
+
+            for (let i = 0; i < this.voices.length; i++) {
+                if (!intervalGrid[t][i]) intervalGrid[t][i] = []
+
+                const voice = this.voices[i]
+                for (let j = i + 1; j < this.voices.length; j++) {
+                    const other = this.voices[j]
+                    const interval = Composition.interval(voice[t], other[t])
+                    intervalGrid[t][i].push(interval)
+                }
+            }
         }
         return intervalGrid
     }
 
+    /**
+     * Parallel motion is a time indexed array of symmetric matrices where each
+     * element (t, i, j) is true if voice i and voice j will move in parallel
+     * at time t for some banned interval. Since the matrix is symmetric, only
+     * the upper triangle is stored.
+     */
     get parallelMotion() {
         const grid = this.intervalGrid
         const banned = Composition.bannedIntervals
@@ -76,7 +102,7 @@ class Composition {
         return parallelMotion
     }
 
-    validate() {
+    validateLength() {
         const first = this.length
         const lengths = this.voices.map((voice) => voice.length)
         if (lengths.some((length) => length !== first)) {
@@ -84,7 +110,9 @@ class Composition {
         }
     }
 
-    checkForParallelMotion() {
+    validate() {
+        this.validateLength()
+
         const grid = this.intervalGrid
         const parallelMotion = this.parallelMotion
 
@@ -108,10 +136,8 @@ async function main() {
     ])
 
     const midis = files.map((file) => new tonejs.Midi(file))
-
     const composition = new Composition(midis)
-
-    composition.checkForParallelMotion()
+    composition.validate()
 
     console.log('No parallel motion detected!')
 }
