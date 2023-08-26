@@ -13,7 +13,7 @@ function log(...args: any[]) {
  * composition is valid if there is no parallel motion between any two voices as
  * time advances.
  */
-class Composition {
+export class Composition {
     static bannedIntervals = [0, 5, 7]
 
     length: number
@@ -27,15 +27,21 @@ class Composition {
      * is a loop, so we add the first note to the end of the array. This helps
      * us later because you can have parallel motion at the end of a loop.
      */
-    constructor(midis: tonejs.Midi[]) {
+    constructor(files: Buffer[]) {
+        const midis = files.map((file) => new tonejs.Midi(file))
         this.voices = Composition.processVoices(midis, true)
         this.length = this.voices[0].length
     }
 
-    static create(midis: tonejs.Midi[]) {
-        const composition = new Composition(midis)
+    static create(files: Buffer[]) {
+        const composition = new Composition(files)
         composition.validate()
         return composition
+    }
+
+    static async createFromPaths(paths: string[]) {
+        const files = await Promise.all(paths.map((path) => fs.readFile(path)))
+        return Composition.create(files)
     }
 
     /**
@@ -153,15 +159,12 @@ class Composition {
 }
 
 async function main() {
-    const files = await Promise.all([
-        fs.readFile('./data/voice1.mid'),
-        fs.readFile('./data/voice2.mid'),
-        fs.readFile('./data/voice3.mid'),
-        fs.readFile('./data/voice4.mid'),
+    await Composition.createFromPaths([
+        './data/voice1.mid',
+        './data/voice2.mid',
+        './data/voice3.mid',
+        './data/voice4.mid',
     ])
-
-    const midis = files.map((file) => new tonejs.Midi(file))
-    Composition.create(midis)
 
     console.log('No parallel motion detected!')
 }
