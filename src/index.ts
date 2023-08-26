@@ -133,11 +133,6 @@ class Composition {
         const grid = this.intervalGrid
         const motion = this.parallelMotionGrid
 
-        const a: any = {}
-        a.b = 1
-        a.c = a
-        console.log(util.inspect(a, false, null, true))
-
         log(grid)
         log(motion)
 
