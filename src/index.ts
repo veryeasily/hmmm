@@ -85,7 +85,7 @@ export class Composition {
                 for (let j = i + 1; j < this.voices.length; j++) {
                     const other = this.voices[j]
                     const interval = Composition.interval(voice[t], other[t])
-                    intervalGrid[t][i].push(interval)
+                    intervalGrid[t][i][j] = interval
                 }
             }
         }
@@ -105,23 +105,21 @@ export class Composition {
         const motionGrid = grid.map((matrix, t) => {
             const nextMatrix = grid[t + 1]
 
-            return matrix.map((intervals, i) => {
+            const result: boolean[][] = []
+            for (let i = 0; i < matrix.length; i++) {
+                const intervals = matrix[i]
                 const nextIntervals = nextMatrix?.[i]
-                if (!nextIntervals) return []
+                if (!result[i]) result[i] = []
+                if (!nextIntervals) continue
 
-                return intervals.map((interval, j) => {
-                    if (!banned.includes(interval)) {
-                        return false
-                    }
-
+                for (let j = i + 1; j < intervals.length; j++) {
+                    const interval = intervals[j]
                     const next = nextIntervals[j]
-                    if (interval === next) {
-                        return true
-                    }
-
-                    return false
-                })
-            })
+                    const isBanned = banned.includes(interval)
+                    result[i][j] = isBanned && interval === next
+                }
+            }
+            return result
         })
 
         return motionGrid
