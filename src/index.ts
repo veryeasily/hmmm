@@ -87,16 +87,16 @@ class Composition {
     }
 
     /**
-     * Parallel motion grid is a time-indexed array of boolean symmetric
-     * matrices where each element (t, i, j) is true if voice i and voice j will
-     * move in parallel at time t for some banned interval. Since the matrix is
+     * Motion grid is a time-indexed array of boolean symmetric matrices where
+     * each element (t, i, j) is true if voice i and voice j will move in
+     * parallel at time t for some banned interval. Since the matrix is
      * symmetric, only the upper triangle is stored.
      */
-    get parallelMotionGrid() {
+    get motionGrid() {
         const grid = this.intervalGrid
         const banned = Composition.bannedIntervals
 
-        const parallelMotion = grid.map((matrix, t) => {
+        const motionGrid = grid.map((matrix, t) => {
             const nextMatrix = grid[t + 1]
 
             return matrix.map((intervals, i) => {
@@ -118,7 +118,7 @@ class Composition {
             })
         })
 
-        return parallelMotion
+        return motionGrid
     }
 
     validateLength() {
@@ -130,7 +130,7 @@ class Composition {
     }
 
     validateParallelMotion() {
-        const motion = this.parallelMotionGrid
+        const motion = this.motionGrid
         const detected = motion.flat(2).some((check) => check)
 
         if (detected) {
@@ -143,7 +143,7 @@ class Composition {
 
         if (DEBUG) {
             const grid = this.intervalGrid
-            const motion = this.parallelMotionGrid
+            const motion = this.motionGrid
             log(grid)
             log(motion)
         }
