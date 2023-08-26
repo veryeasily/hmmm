@@ -3,10 +3,6 @@ import fs from 'fs/promises'
 
 const DEBUG = process.env.HMMM_DEBUG === 'true'
 
-function log(...args: any[]) {
-    console.dir(args, { depth: null })
-}
-
 /**
  * A composition is a collection of voices. Each voice is a time indexed array
  * of notes given by their MIDI number (for example, middle C is 60). The
@@ -69,41 +65,41 @@ export class Composition {
     }
 
     /**
-     * Interval grid is a time-indexed array of symmetric matrices where each
+     * The timeline is a time-indexed array of symmetric matrices where each
      * element (t, i, j) is the interval between voice i and voice j at time t.
      * Since the matrix is symmetric, only the upper triangle is stored.
      */
-    get intervalGrid() {
-        const intervalGrid: number[][][] = []
+    get timeline() {
+        const timeline: number[][][] = []
         for (let t = 0; t < this.length; t++) {
-            if (!intervalGrid[t]) intervalGrid[t] = []
+            if (!timeline[t]) timeline[t] = []
 
             for (let i = 0; i < this.voices.length; i++) {
-                if (!intervalGrid[t][i]) intervalGrid[t][i] = []
+                if (!timeline[t][i]) timeline[t][i] = []
 
                 const voice = this.voices[i]
                 for (let j = i + 1; j < this.voices.length; j++) {
                     const other = this.voices[j]
                     const interval = Composition.interval(voice[t], other[t])
-                    intervalGrid[t][i][j] = interval
+                    timeline[t][i][j] = interval
                 }
             }
         }
-        return intervalGrid
+        return timeline
     }
 
     /**
-     * Motion grid is a time-indexed array of boolean symmetric matrices where
-     * each element (t, i, j) is true if voice i and voice j will move in
+     * The motion timeline is a time-indexed array of boolean symmetric matrices
+     * where each element (t, i, j) is true if voice i and voice j will move in
      * parallel at time t for some banned interval. Since the matrix is
      * symmetric, only the upper triangle is stored.
      */
-    get motionGrid() {
-        const grid = this.intervalGrid
+    get motionTimeline() {
+        const timeline = this.timeline
         const banned = Composition.bannedIntervals
 
-        const motionGrid = grid.map((matrix, t) => {
-            const nextMatrix = grid[t + 1]
+        const mTimeline = timeline.map((matrix, t) => {
+            const nextMatrix = timeline[t + 1]
 
             const result: boolean[][] = []
             for (let i = 0; i < matrix.length; i++) {
@@ -122,17 +118,17 @@ export class Composition {
             return result
         })
 
-        return motionGrid
+        return mTimeline
     }
 
     validate() {
         this.validateLength()
 
         if (DEBUG) {
-            const grid = this.intervalGrid
-            const motion = this.motionGrid
-            log(grid)
-            log(motion)
+            const timeline = this.timeline
+            const mTimeline = this.motionTimeline
+            console.dir(timeline, { depth: null })
+            console.dir(mTimeline, { depth: null })
         }
 
         this.validateMotion()
@@ -147,8 +143,8 @@ export class Composition {
     }
 
     validateMotion() {
-        const motion = this.motionGrid
-        const detected = motion.flat(2).some((check) => check)
+        const mTimeline = this.motionTimeline
+        const detected = mTimeline.flat(2).some((check) => check)
 
         if (detected) {
             throw new Error('Parallel motion detected')
