@@ -25,7 +25,7 @@ export class Composition {
      */
     constructor(files: Buffer[]) {
         const midis = files.map((file) => new tonejs.Midi(file))
-        this.voices = Composition.processVoices(midis, true)
+        this.voices = Composition.processMidis(midis, true)
         this.length = this.voices[0].length
     }
 
@@ -46,7 +46,7 @@ export class Composition {
      * terms of visualizing this, this will be a matrix where each element
      * (t, i) is the note played by voice i at time t.
      */
-    static processVoices(midis: tonejs.Midi[], loop = true) {
+    static processMidis(midis: tonejs.Midi[], loop = true) {
         return midis.map((midi) => {
             const notes = midi.tracks[0].notes.map((note) => note.midi)
             if (loop) {

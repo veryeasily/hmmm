@@ -8,7 +8,7 @@
         "build": "tsc",
         "start": "pnpm run build && node dist/index.js",
         "dev": "pnpm run build && node --inspect-brk dist/index.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "vitest"
     },
     "keywords": [],
     "author": "",
