@@ -1,7 +1,7 @@
 import tonejs from '@tonejs/midi'
 import fs from 'fs/promises'
 
-const DEBUG = process.env.HMMM_DEBUG || false
+const DEBUG = process.env.HMMM_DEBUG === 'true'
 
 function log(...args: any[]) {
     console.dir(args, { depth: null })
