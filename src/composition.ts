@@ -2,8 +2,7 @@ import tonejs from '@tonejs/midi'
 import fs from 'node:fs/promises'
 import util from 'node:util'
 
-// const DEBUG = process.env.HMMM_DEBUG === 'true'
-const DEBUG = false
+const DEBUG = process.env.HMMM_DEBUG === 'true'
 
 function log(...args: any[]) {
     const output = args
