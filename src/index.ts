@@ -7,7 +7,6 @@ function log(...args: any[]) {
 }
 
 /**
- * We use the Composition class to check for parallel motion in a composition.
  * A composition is a collection of voices. Each voice is a time indexed array
  * of notes given by their MIDI number (for example, middle C is 60). The
  * composition is valid if there is no parallel motion between any two voices as
