@@ -121,23 +121,6 @@ class Composition {
         return motionGrid
     }
 
-    validateLength() {
-        const first = this.length
-        const lengths = this.voices.map((voice) => voice.length)
-        if (lengths.some((length) => length !== first)) {
-            throw new Error('Voices are not the same length')
-        }
-    }
-
-    validateParallelMotion() {
-        const motion = this.motionGrid
-        const detected = motion.flat(2).some((check) => check)
-
-        if (detected) {
-            throw new Error('Parallel motion detected')
-        }
-    }
-
     validate() {
         this.validateLength()
 
@@ -148,7 +131,24 @@ class Composition {
             log(motion)
         }
 
-        this.validateParallelMotion()
+        this.validateMotion()
+    }
+
+    validateLength() {
+        const first = this.length
+        const lengths = this.voices.map((voice) => voice.length)
+        if (lengths.some((length) => length !== first)) {
+            throw new Error('Voices are not the same length')
+        }
+    }
+
+    validateMotion() {
+        const motion = this.motionGrid
+        const detected = motion.flat(2).some((check) => check)
+
+        if (detected) {
+            throw new Error('Parallel motion detected')
+        }
     }
 }
 
