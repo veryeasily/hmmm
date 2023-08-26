@@ -1,4 +1,4 @@
-import { Composition } from './index.js'
+import { Composition } from './composition.js'
 
 describe('Composition', () => {
     it('should create a composition', async () => {

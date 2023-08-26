@@ -5,21 +5,28 @@
     "type": "module",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc",
+        "build": "rimraf dist && tsc",
         "start": "pnpm run build && node dist/index.js",
-        "dev": "pnpm run build && node --inspect-brk dist/index.js",
+        "dev": "ts-node --esm src/index.ts",
         "test": "vitest"
+    },
+    "bin": {
+        "hmmm": "./hmmm.mjs"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "@tonejs/midi": "^2.0.28",
+        "cac": "^6.7.14",
+        "picocolors": "^1.0.0",
         "tonal": "^5.0.0"
     },
     "devDependencies": {
         "@types/node": "^20.5.6",
         "prettier": "^3.0.2",
+        "rimraf": "^5.0.1",
+        "ts-node": "^10.9.1",
         "typescript": "^5.2.2",
         "vitest": "^0.34.3"
     }
