@@ -141,10 +141,9 @@ class Composition {
     validate() {
         this.validateLength()
 
-        const grid = this.intervalGrid
-        const motion = this.parallelMotionGrid
-
         if (DEBUG) {
+            const grid = this.intervalGrid
+            const motion = this.parallelMotionGrid
             log(grid)
             log(motion)
         }
